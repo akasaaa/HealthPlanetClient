@@ -21,8 +21,8 @@ client.fetch(from: "20220101120000", to: "20220301120000") { result in
 
 基本的には[API仕様書](https://www.healthplanet.jp/apis/api.html)を参考にしてください。
 
-- `clientId`, `clientSecret`
+- `clientId`, `clientSecret`  
 https://www.healthplanet.jp/ から、 `登録情報` > `サービス連携` > `アプリケーション開発者の方はこちら` で登録することで取得できます。(Domainは適当で構いません。)
 
-- `refreshToken`
-後で書く
+- `refreshToken`  
+いずれ書く。
