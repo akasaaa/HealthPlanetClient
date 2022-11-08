@@ -72,9 +72,9 @@ public struct InnerScan: Codable {
         public let value: Decimal
     }
     
-    public enum DataType: Codable {
-        case weight
-        case fatPercentage
+    public enum DataType: String, Codable {
+        case weight = "kg"
+        case fatPercentage = "%"
         
         fileprivate init(tag: WealthPlanetStatusInnerScanResponse.Tag) {
             switch tag {
