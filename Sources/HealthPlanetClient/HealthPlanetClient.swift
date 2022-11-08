@@ -60,19 +60,19 @@ public struct HealthPlanetClient {
 
 }
 
-public struct InnerScan {
+public struct InnerScan: Codable {
     public let birthDate: String
     public let data: [Data]
     public let height: Decimal
     public let sex: String
     
-    public struct Data {
+    public struct Data: Codable {
         public let date: Date
         public let type: DataType
         public let value: Decimal
     }
     
-    public enum DataType {
+    public enum DataType: Codable {
         case weight
         case fatPercentage
         
