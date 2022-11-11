@@ -19,4 +19,12 @@ public enum Error: Swift.Error, CustomStringConvertible {
             return error.localizedDescription
         }
     }
+    
+    init(from error: Swift.Error) {
+        if let withComment = error as? Error {
+            self = withComment
+        } else {
+            self = .foundationError(error)
+        }
+    }
 }

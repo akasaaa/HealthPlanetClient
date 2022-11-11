@@ -8,9 +8,13 @@ let package = Package(
     products: [
         .library(name: "HealthPlanetClient", targets: ["HealthPlanetClient"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/mxcl/PromiseKit.git", from: "6.18.1")
+    ],
     targets: [
-        .target(name: "HealthPlanetClient", dependencies: []),
+        .target(name: "HealthPlanetClient", dependencies: [
+            .product(name: "PromiseKit", package: "PromiseKit"),
+        ]),
         .testTarget(name: "HealthPlanetClientTests", dependencies: ["HealthPlanetClient"]),
     ]
 )

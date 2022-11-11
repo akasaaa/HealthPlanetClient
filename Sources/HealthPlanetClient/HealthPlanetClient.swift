@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PromiseKit
 
 public struct HealthPlanetClient {
     private let clientId: String
@@ -18,44 +19,30 @@ public struct HealthPlanetClient {
         self.refreshToken = refreshToken
     }
     
-    public func fetch(from: String = "", to: String = "", handler: @escaping (Result<InnerScan, Error>) -> Void) {
+    public func fetch(from: String = "", to: String = "", handler: @escaping (Swift.Result<InnerScan, Error>) -> Void) {
         
-        getToken { result in
-            switch result {
-            case .success(let accessToken):
-                getInnerScanData(accessToken: accessToken, from: from, to: to, handler: handler)
-            case .failure(let error):
-                handler(.failure(error))
+        getToken()
+            .then { accessToken in
+                getInnerScanData(accessToken: accessToken, from: from, to: to)
             }
-        }
+            .done { innerScan in
+                handler(.success(innerScan))
+            }
+            .catch { error in
+                handler(.failure(Error(from: error)))
+            }
     }
     
-    private func getToken(handler: @escaping (Result<String, Error>) -> Void) {
+    private func getToken() -> Promise<String> {
         let request = WealthPlanetOAuthTokenRequest(clientId: clientId, clientSecret: clientSecret, refreshToken: refreshToken)
-        APIClient.exec(request: request) { result in
-            switch result {
-            case .success(let response):
-                handler(.success(response.result.accessToken))
-            case .failure(let error):
-                handler(.failure(error))
-            }
-        }
+        return APIClient.exec(request: request)
+            .map { $0.result.accessToken }
     }
 
-    private func getInnerScanData(accessToken: String, from: String, to: String, handler: @escaping (Result<InnerScan, Error>) -> Void) {
+    private func getInnerScanData(accessToken: String, from: String, to: String) -> Promise<InnerScan> {
         let request = WealthPlanetStatusInnerScanRequest(accessToken: accessToken, from: from, to: to)
-        APIClient.exec(request: request) { result in
-            switch result {
-            case .success(let response):
-                guard !response.result.data.isEmpty else {
-                    handler(.failure(Error.withComment("Empty Data Response")))
-                    return
-                }
-                handler(.success(InnerScan(from: response.result)))
-            case .failure(let error):
-                handler(.failure(error))
-            }
-        }
+        return APIClient.exec(request: request)
+            .map { InnerScan(from: $0.result) }
     }
 
 }
